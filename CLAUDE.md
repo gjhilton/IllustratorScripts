@@ -10,9 +10,13 @@ This repo contains JavaScript automation scripts for Adobe Illustrator 2026. Scr
 
 All scripts must be valid **ExtendScript** — Adobe's ES3-era JavaScript dialect. Do not use ES6+ syntax: no `let`, `const`, arrow functions, template literals, `for...of`, destructuring, spread, `class`, or `Promise`. Use `var`, `function`, and string concatenation.
 
+## Project Structure
+
+All scripts live in `/scripts/*.jsx`.
+
 ## Running Scripts
 
-- In Illustrator: **File > Scripts > Other Script…** → select the `.jsx` file
+- In Illustrator: **File > Scripts > Other Script…** → select the `.jsx` file from the `/scripts` folder
 - Scripts can also be placed in Illustrator's Scripts folder for persistent menu access:
   - macOS: `/Applications/Adobe Illustrator 2026/Presets/en_US/Scripts/`
 
