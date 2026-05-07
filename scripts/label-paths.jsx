@@ -1,8 +1,37 @@
+// =============================================================================
+// Label Paths  v1.4
+// =============================================================================
+// Creates a centred Helvetica text label for each selected path.
+// Label text is taken from the name of the sublayer the path currently lives on.
+//
+// Usage:
+//   1. Select one or more paths (typically after running Paths to Sublayers).
+//   2. Run the script via File > Scripts.
+//   3. In the dialog:
+//        Layer name      — name of the new top-level layer that holds all labels
+//        Sublayer prefix — prefix for each label's sublayer (e.g. "Label 1", "Label 2")
+//        Font size       — point size of the label text
+//        Bold            — use Helvetica-Bold instead of Helvetica
+//        Colour          — RGB fill colour of the text (0–255 per channel)
+//        Background      — optionally draw a filled rectangle behind each label
+//          BG colour     — RGB fill colour of the background rectangle
+//          Margin        — padding in points between the text bounds and the rectangle edge
+//   4. Click Make Labels.
+//
+// Output:
+//   A new layer (named by "Layer name") is created at the top of the layer stack.
+//   Each label gets its own sublayer containing a text frame centred on the
+//   bounding-box centroid of its source path, and optionally a background rectangle.
+//   On SVG export (Object IDs: Layer Names) these become nested <g> elements.
+//
+// Requirements:  Adobe Illustrator 2026, at least one path selected.
+// =============================================================================
+
 #target illustrator
 
 (function () {
     var SCRIPT_NAME        = "Label Paths";
-    var SCRIPT_VERSION     = "1.2";
+    var SCRIPT_VERSION     = "1.4";
     var SCRIPT_DESCRIPTION = "Creates a centred text label for each selected path.";
 
     if (app.documents.length === 0) {
@@ -89,6 +118,38 @@
     var bInput = colourGroup.add("edittext", undefined, "0");
     bInput.preferredSize.width = 45;
 
+    // Background rectangle
+    var bgCheck = dlg.add("checkbox", undefined, "Background rectangle");
+    bgCheck.value = false;
+
+    var bgGroup = dlg.add("group");
+    bgGroup.orientation   = "column";
+    bgGroup.alignChildren = "fill";
+    bgGroup.enabled       = false;
+
+    var bgColourGroup = bgGroup.add("group");
+    bgColourGroup.orientation   = "row";
+    bgColourGroup.alignChildren = "center";
+    bgColourGroup.add("statictext", undefined, "BG colour:");
+    bgColourGroup.add("statictext", undefined, "R");
+    var bgRInput = bgColourGroup.add("edittext", undefined, "255");
+    bgRInput.preferredSize.width = 45;
+    bgColourGroup.add("statictext", undefined, "G");
+    var bgGInput = bgColourGroup.add("edittext", undefined, "255");
+    bgGInput.preferredSize.width = 45;
+    bgColourGroup.add("statictext", undefined, "B");
+    var bgBInput = bgColourGroup.add("edittext", undefined, "255");
+    bgBInput.preferredSize.width = 45;
+
+    var bgMarginGroup = bgGroup.add("group");
+    bgMarginGroup.orientation   = "row";
+    bgMarginGroup.alignChildren = "center";
+    bgMarginGroup.add("statictext", undefined, "Margin:");
+    var bgMarginInput = bgMarginGroup.add("edittext", undefined, "4");
+    bgMarginInput.preferredSize.width = 60;
+
+    bgCheck.onClick = function () { bgGroup.enabled = bgCheck.value; };
+
     // Selected path count (read-only)
     var countGroup = dlg.add("group");
     countGroup.orientation   = "row";
@@ -126,6 +187,20 @@
         var g = clamp255(isNaN(gVal) ? 0 : gVal);
         var b = clamp255(isNaN(bVal) ? 0 : bVal);
 
+        var bold  = boldCheck.value;
+        var useBg = bgCheck.value;
+        var bgR = 255, bgG = 255, bgB = 255, bgMargin = 4;
+        if (useBg) {
+            var bgRVal = parseInt(bgRInput.text, 10);
+            var bgGVal = parseInt(bgGInput.text, 10);
+            var bgBVal = parseInt(bgBInput.text, 10);
+            bgR = clamp255(isNaN(bgRVal) ? 255 : bgRVal);
+            bgG = clamp255(isNaN(bgGVal) ? 255 : bgGVal);
+            bgB = clamp255(isNaN(bgBVal) ? 255 : bgBVal);
+            bgMargin = parseFloat(bgMarginInput.text);
+            if (isNaN(bgMargin) || bgMargin < 0) { bgMargin = 4; }
+        }
+
         dlg.close();
 
         try {
@@ -133,6 +208,14 @@
             colour.red   = r;
             colour.green = g;
             colour.blue  = b;
+
+            var bgColour;
+            if (useBg) {
+                bgColour = new RGBColor();
+                bgColour.red   = bgR;
+                bgColour.green = bgG;
+                bgColour.blue  = bgB;
+            }
 
             var parentLayer = doc.layers.add();
             parentLayer.name = layerName;
@@ -153,7 +236,7 @@
 
                 var attrs = tf.textRange.characterAttributes;
                 try {
-                    attrs.textFont = app.textFonts.getByName(boldCheck.value ? "Helvetica-Bold" : "Helvetica");
+                    attrs.textFont = app.textFonts.getByName(bold ? "Helvetica-Bold" : "Helvetica");
                 } catch (e) {}
                 attrs.size      = fontSize;
                 attrs.fillColor = colour;
@@ -165,6 +248,21 @@
                 // by the delta between its centre and the target centroid.
                 var tb = tf.geometricBounds; // [left, top, right, bottom]
                 tf.translate(cx - (tb[0] + tb[2]) / 2, cy - (tb[1] + tb[3]) / 2);
+
+                if (useBg) {
+                    // Re-read bounds after translation for accurate rectangle placement.
+                    var fb = tf.geometricBounds; // [left, top, right, bottom]
+                    var rect = doc.pathItems.rectangle(
+                        fb[1] + bgMargin,               // top  (Y increases upward)
+                        fb[0] - bgMargin,               // left
+                        (fb[2] - fb[0]) + 2 * bgMargin, // width
+                        (fb[1] - fb[3]) + 2 * bgMargin  // height
+                    );
+                    rect.fillColor = bgColour;
+                    rect.stroked   = false;
+                    // Move rect first so tf lands on top when it follows.
+                    rect.move(subLayer, ElementPlacement.PLACEATBEGINNING);
+                }
 
                 tf.move(subLayer, ElementPlacement.PLACEATBEGINNING);
             }
