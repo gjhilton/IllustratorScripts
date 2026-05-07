@@ -16,8 +16,8 @@ Scripts then appear under **File > Scripts** in Illustrator. Alternatively, run 
 
 ## Scripts
 
-### Paths to Layers `scripts/paths-to-layers.jsx`
+### Paths to Sublayers `scripts/paths-to-sublayers.jsx`
 
-Moves each selected path onto its own new layer.
+Moves each selected path to a sublayer within a new named layer.
 
-**Usage:** Select one or more paths, then run the script. A dialog shows the number of selected paths and lets you set a layer name prefix (e.g. `Road` → layers named `Road 1`, `Road 2`, …). Click **Make Layers** to create the layers at the top of the layer stack.
+**Usage:** Select one or more paths, then run the script. A dialog shows the number of selected paths and lets you enter a layer name (e.g. `roads`). Click **Make Layers** to create a top-level layer named `roads` containing a sublayer per path (`roads 1`, `roads 2`, …). On SVG export these become nested `<g>` elements with matching `id` attributes.

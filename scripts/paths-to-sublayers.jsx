@@ -1,9 +1,9 @@
 #target illustrator
 
 (function () {
-    var SCRIPT_NAME        = "Paths to Layers";
-    var SCRIPT_VERSION     = "1.1";
-    var SCRIPT_DESCRIPTION = "Moves each selected path to its own new layer.";
+    var SCRIPT_NAME        = "Paths to Sublayers";
+    var SCRIPT_VERSION     = "1.3";
+    var SCRIPT_DESCRIPTION = "Moves each selected path to a sublayer within a new named layer.";
 
     if (app.documents.length === 0) {
         alert("No document is open.");
@@ -53,9 +53,17 @@
     var prefixGroup = dlg.add("group");
     prefixGroup.orientation   = "row";
     prefixGroup.alignChildren = "center";
-    prefixGroup.add("statictext", undefined, "Layer name prefix:");
+    prefixGroup.add("statictext", undefined, "Layer name:");
     var prefixInput = prefixGroup.add("edittext", undefined, "Path");
     prefixInput.preferredSize.width = 150;
+
+    // Start index input
+    var indexGroup = dlg.add("group");
+    indexGroup.orientation   = "row";
+    indexGroup.alignChildren = "center";
+    indexGroup.add("statictext", undefined, "Start index:");
+    var indexInput = indexGroup.add("edittext", undefined, "0");
+    indexInput.preferredSize.width = 60;
 
     // Selected path count (read-only)
     var countGroup = dlg.add("group");
@@ -78,18 +86,23 @@
     makeBtn.onClick = function () {
         var prefix = prefixInput.text.replace(/^\s+|\s+$/g, "");
         if (prefix.length === 0) { prefix = "Path"; }
+        var startIndex = parseInt(indexInput.text, 10);
+        if (isNaN(startIndex) || startIndex < 0) { startIndex = 0; }
         dlg.close();
 
         try {
-            // Iterate in reverse so layer "1" ends up at the top of the stack.
-            // doc.layers.add() always inserts at the top, so the last-created layer
+            var parentLayer = doc.layers.add();
+            parentLayer.name = prefix;
+
+            // Iterate in reverse so sublayer at startIndex ends up at the top of the stack.
+            // layers.add() always inserts at the top, so the last-created sublayer
             // (index 0) will be topmost — reversing the loop corrects for this.
             for (var i = paths.length - 1; i >= 0; i--) {
-                var newLayer = doc.layers.add();
-                newLayer.name = prefix + " " + (i + 1);
-                paths[i].move(newLayer, ElementPlacement.PLACEATBEGINNING);
+                var subLayer = parentLayer.layers.add();
+                subLayer.name = prefix + " " + (startIndex + i);
+                paths[i].move(subLayer, ElementPlacement.PLACEATBEGINNING);
             }
-            alert("Done. Created " + paths.length + " layer" + (paths.length === 1 ? "." : "s."));
+            alert("Done. Created layer \"" + prefix + "\" with " + paths.length + " sublayer" + (paths.length === 1 ? "." : "s."));
         } catch (e) {
             alert("Error: " + e.message);
         }
