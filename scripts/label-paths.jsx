@@ -2,7 +2,7 @@
 
 (function () {
     var SCRIPT_NAME        = "Label Paths";
-    var SCRIPT_VERSION     = "1.4";
+    var SCRIPT_VERSION     = "1.5";
     var SCRIPT_DESCRIPTION = "Creates a centred text label for each selected path.";
 
     if (app.documents.length === 0) {
@@ -15,13 +15,13 @@
     var paths = [];
     var sel = doc.selection;
     for (var i = 0; i < sel.length; i++) {
-        if (sel[i].typename === "PathItem") {
+        if (sel[i].typename === "PathItem" || sel[i].typename === "CompoundPathItem") {
             paths.push(sel[i]);
         }
     }
 
     if (paths.length === 0) {
-        alert("No paths are selected.\nPlease select one or more paths and try again.");
+        alert("No paths are selected.\nPlease select one or more paths or compound paths and try again.");
         return;
     }
 

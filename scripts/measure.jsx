@@ -200,8 +200,8 @@
             }
 
             // Scale factors
-            var realLen_m  = scaleValue * unitFactor;
-            var mPerPt     = realLen_m / scaleLenPts;
+            var realLenM  = scaleValue * unitFactor;
+            var mPerPt    = realLenM / scaleLenPts;
             var m2PerSqPt  = mPerPt * mPerPt;
 
             // Per-item calculations

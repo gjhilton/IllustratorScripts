@@ -3,7 +3,7 @@
 (function () {
     var SCRIPT_NAME        = "Paths to Sublayers";
     var SCRIPT_VERSION     = "1.4";
-    var SCRIPT_DESCRIPTION = "Moves each selected path to a sublayer within a new named layer.";
+    var SCRIPT_DESCRIPTION = "Moves each selected path or compound path to its own sublayer within a new named layer.";
 
     if (app.documents.length === 0) {
         alert("No document is open.");
@@ -46,8 +46,7 @@
     headerGroup.add("statictext", undefined, SCRIPT_DESCRIPTION);
 
     // Separator
-    var sep = dlg.add("panel", undefined, undefined);
-    sep.preferredSize.height = 2;
+    dlg.add("panel", undefined, undefined).preferredSize.height = 2;
 
     // Prefix input
     var prefixGroup = dlg.add("group");
