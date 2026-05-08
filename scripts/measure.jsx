@@ -1,7 +1,7 @@
 #target illustrator
 
 (function () {
-    var SCRIPT_NAME        = "Calculate Area";
+    var SCRIPT_NAME        = "Measure";
     var SCRIPT_VERSION     = "1.0";
     var SCRIPT_DESCRIPTION = "Calculates real-world area of selected paths using a scale marker.";
 
@@ -145,8 +145,8 @@
     outputGroup.alignChildren = "center";
     outputGroup.add("statictext", undefined, "Output:");
     var radioDialog = outputGroup.add("radiobutton", undefined, "Dialog");
-    outputGroup.add("radiobutton", undefined, "Text frame");
-    radioDialog.value = true;
+    var radioFrame  = outputGroup.add("radiobutton", undefined, "Text frame");
+    radioFrame.value = true;
 
     // Selected item count (read-only)
     var countGroup = dlg.add("group");

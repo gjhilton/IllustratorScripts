@@ -52,7 +52,7 @@ Click **Make Labels**. A new layer is created at the top of the stack containing
 
 ---
 
-### Calculate Area `scripts/calculate-area.jsx`
+### Measure `scripts/measure.jsx`
 
 Calculates the real-world area and perimeter of selected paths using a scale marker line on a named layer. Handles both simple paths and compound paths (with holes).
 
