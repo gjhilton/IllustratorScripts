@@ -2,7 +2,7 @@
 
 (function () {
     var SCRIPT_NAME        = "Measure";
-    var SCRIPT_VERSION     = "1.1";
+    var SCRIPT_VERSION     = "1.2";
     var SCRIPT_DESCRIPTION = "Calculates real-world area and perimeter of selected paths using a scale marker.";
 
     var UNITS = [
@@ -205,21 +205,23 @@
             var m2PerSqPt  = mPerPt * mPerPt;
 
             // Per-item calculations
-            var labels     = [];
-            var areas      = [];
-            var perims     = [];
+            var rows       = [];
             var totalArea  = 0;
             var totalPerim = 0;
 
             for (var i = 0; i < items.length; i++) {
-                labels.push(items[i].layer.name);
-                var a = getAreaSqPts(items[i])   * m2PerSqPt;
+                var a = getAreaSqPts(items[i])    * m2PerSqPt;
                 var p = getPerimeterPts(items[i]) * mPerPt;
-                areas.push(a);
-                perims.push(p);
+                rows.push({ label: items[i].layer.name, area: a, perim: p });
                 totalArea  += a;
                 totalPerim += p;
             }
+
+            rows.sort(function (rowA, rowB) {
+                var la = rowA.label.toLowerCase().replace(/[^a-z0-9 ]/g, "");
+                var lb = rowB.label.toLowerCase().replace(/[^a-z0-9 ]/g, "");
+                return la < lb ? -1 : (la > lb ? 1 : 0);
+            });
 
             // Build output text
             var COL_L = 16;
@@ -230,18 +232,18 @@
 
             var lines = [];
             lines.push(padRight("", COL_L) + padLeft("Area", COL_N + 3) + padLeft("Perimeter", COL_N + 2));
-            for (var i = 0; i < items.length; i++) {
+            for (var i = 0; i < rows.length; i++) {
                 lines.push(
-                    padRight(labels[i], COL_L) +
-                    padLeft(formatNumber(areas[i])  + " m²", COL_N + 3) +
-                    padLeft(formatNumber(perims[i]) + " m",       COL_N + 2)
+                    padRight(rows[i].label, COL_L) +
+                    padLeft(formatNumber(rows[i].area)  + " m²", COL_N + 3) +
+                    padLeft(formatNumber(rows[i].perim) + " m",  COL_N + 2)
                 );
             }
             lines.push(SEP);
             lines.push(
                 padRight("Total", COL_L) +
                 padLeft(formatNumber(totalArea)  + " m²", COL_N + 3) +
-                padLeft(formatNumber(totalPerim) + " m",       COL_N + 2)
+                padLeft(formatNumber(totalPerim) + " m",  COL_N + 2)
             );
             lines.push(padRight("", COL_L) + "(" + formatNumber(totalArea / 10000) + " ha)");
             var outputText = lines.join("\n");

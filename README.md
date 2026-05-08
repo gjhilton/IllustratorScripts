@@ -66,7 +66,7 @@ Calculates the real-world area and perimeter of selected paths using a scale mar
 | Unit | Unit of the scale length: chains (default), metres, km, feet, yards, miles |
 | Output | **Dialog** — show results in a copyable window; **Text frame** — place results on the canvas |
 
-Click **Calculate**. Results are shown per path (using each path's sublayer name as the label) with a grand total:
+Click **Calculate**. Results are sorted alphabetically by sublayer name (case-insensitive, punctuation ignored) and shown per path with a grand total:
 
 ```
                   Area          Perimeter
