@@ -2,7 +2,7 @@
 
 (function () {
     var SCRIPT_NAME        = "Label Paths";
-    var SCRIPT_VERSION     = "1.6";
+    var SCRIPT_VERSION     = "1.7";
     var SCRIPT_DESCRIPTION = "Creates a centred text label for each selected path or compound path.";
 
     if (app.documents.length === 0) {
@@ -63,6 +63,14 @@
     prefixGroup.add("statictext", undefined, "Sublayer prefix:");
     var prefixInput = prefixGroup.add("edittext", undefined, "Label");
     prefixInput.preferredSize.width = 150;
+
+    // Font
+    var fontGroup = dlg.add("group");
+    fontGroup.orientation   = "row";
+    fontGroup.alignChildren = "center";
+    fontGroup.add("statictext", undefined, "Font:");
+    var fontDropdown = fontGroup.add("dropdownlist", undefined, ["Helvetica", "SF Mono"]);
+    fontDropdown.selection = 0;
 
     // Font size + bold
     var sizeGroup = dlg.add("group");
@@ -158,8 +166,9 @@
         var g = clamp255(isNaN(gVal) ? 0 : gVal);
         var b = clamp255(isNaN(bVal) ? 0 : bVal);
 
-        var bold  = boldCheck.value;
-        var useBg = bgCheck.value;
+        var sfMono = (fontDropdown.selection.index === 1);
+        var bold   = boldCheck.value;
+        var useBg  = bgCheck.value;
         var bgR = 255, bgG = 255, bgB = 255, bgMargin = 4;
         if (useBg) {
             var bgRVal = parseInt(bgRInput.text, 10);
@@ -207,7 +216,10 @@
 
                 var attrs = tf.textRange.characterAttributes;
                 try {
-                    attrs.textFont = app.textFonts.getByName(bold ? "Helvetica-Bold" : "Helvetica");
+                    attrs.textFont = app.textFonts.getByName(
+                        sfMono ? (bold ? "SFMono-Bold"     : "SFMono-Regular")
+                               : (bold ? "Helvetica-Bold"  : "Helvetica")
+                    );
                 } catch (e) {}
                 attrs.size      = fontSize;
                 attrs.fillColor = colour;

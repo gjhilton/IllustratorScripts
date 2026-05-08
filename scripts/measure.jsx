@@ -189,10 +189,10 @@
                 alert("No paths found on layer \"" + scaleLayerName + "\".");
                 return;
             }
-            var scalePath  = scaleLayer.pathItems[0];
-            var pp         = scalePath.pathPoints;
-            var p0         = pp[0].anchor;
-            var p1         = pp[pp.length - 1].anchor;
+            var scalePath   = scaleLayer.pathItems[0];
+            var pp          = scalePath.pathPoints;
+            var p0          = pp[0].anchor;
+            var p1          = pp[pp.length - 1].anchor;
             var scaleLenPts = Math.sqrt(Math.pow(p1[0] - p0[0], 2) + Math.pow(p1[1] - p0[1], 2));
             if (scaleLenPts === 0) {
                 alert("The scale path has zero length.");

@@ -33,16 +33,17 @@ Click **Make Layers**. A top-level layer is created at the top of the stack cont
 
 ### Label Paths `scripts/label-paths.jsx`
 
-Creates a centred Helvetica text label for each selected path. The label text is taken from the name of the sublayer the path currently lives on — designed to be used after **Paths to Sublayers**.
+Creates a centred text label for each selected path or compound path. The label text is taken from the name of the sublayer the path currently lives on — designed to be used after **Paths to Sublayers**.
 
-**Usage:** Select one or more paths, then run the script.
+**Usage:** Select one or more paths or compound paths, then run the script.
 
 | Dialog option | Description |
 |---|---|
 | Layer name | Name of the new top-level layer that holds all labels |
 | Sublayer prefix | Prefix for each label's sublayer (e.g. `Label 1`, `Label 2`, …) |
+| Font | `Helvetica` or `SF Mono` |
 | Font size | Point size of the label text |
-| Bold | Use Helvetica Bold |
+| Bold | Use the bold variant of the selected font |
 | Colour | RGB fill colour of the text (0–255 per channel) |
 | Background rectangle | Optionally draw a filled rectangle behind each label |
 | BG colour | RGB fill colour of the background rectangle |
