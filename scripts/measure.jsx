@@ -2,8 +2,8 @@
 
 (function () {
     var SCRIPT_NAME        = "Measure";
-    var SCRIPT_VERSION     = "1.0";
-    var SCRIPT_DESCRIPTION = "Calculates real-world area of selected paths using a scale marker.";
+    var SCRIPT_VERSION     = "1.1";
+    var SCRIPT_DESCRIPTION = "Calculates real-world area and perimeter of selected paths using a scale marker.";
 
     var UNITS = [
         { label: "chains",  factor: 20.1168  },
@@ -200,8 +200,8 @@
             }
 
             // Scale factors
-            var realLenM  = scaleValue * unitFactor;
-            var mPerPt    = realLenM / scaleLenPts;
+            var realLenM   = scaleValue * unitFactor;
+            var mPerPt     = realLenM / scaleLenPts;
             var m2PerSqPt  = mPerPt * mPerPt;
 
             // Per-item calculations
@@ -277,7 +277,11 @@
                 var cx = (bx[0] + bx[2]) / 2;
                 var cy = (bx[1] + bx[3]) / 2;
 
-                var tf = doc.textFrames.add();
+                // Add a new unlocked layer so the text frame always has a writable target.
+                var outputLayer = doc.layers.add();
+                outputLayer.name = "Measure";
+
+                var tf = outputLayer.textFrames.add();
                 tf.contents = outputText;
                 try {
                     tf.textRange.characterAttributes.textFont = app.textFonts.getByName("SFMono-Regular");

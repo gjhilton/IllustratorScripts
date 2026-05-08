@@ -2,8 +2,8 @@
 
 (function () {
     var SCRIPT_NAME        = "Label Paths";
-    var SCRIPT_VERSION     = "1.5";
-    var SCRIPT_DESCRIPTION = "Creates a centred text label for each selected path.";
+    var SCRIPT_VERSION     = "1.6";
+    var SCRIPT_DESCRIPTION = "Creates a centred text label for each selected path or compound path.";
 
     if (app.documents.length === 0) {
         alert("No document is open.");
@@ -202,7 +202,7 @@
                 var cx = (bounds[0] + bounds[2]) / 2;
                 var cy = (bounds[1] + bounds[3]) / 2;
 
-                var tf = doc.textFrames.add();
+                var tf = subLayer.textFrames.add();
                 tf.contents = paths[i].layer.name;
 
                 var attrs = tf.textRange.characterAttributes;
@@ -223,7 +223,7 @@
                 if (useBg) {
                     // Re-read bounds after translation for accurate rectangle placement.
                     var fb = tf.geometricBounds; // [left, top, right, bottom]
-                    var rect = doc.pathItems.rectangle(
+                    var rect = subLayer.pathItems.rectangle(
                         fb[1] + bgMargin,               // top  (Y increases upward)
                         fb[0] - bgMargin,               // left
                         (fb[2] - fb[0]) + 2 * bgMargin, // width
@@ -231,11 +231,9 @@
                     );
                     rect.fillColor = bgColour;
                     rect.stroked   = false;
-                    // Move rect first so tf lands on top when it follows.
-                    rect.move(subLayer, ElementPlacement.PLACEATBEGINNING);
+                    // rect was added at the front of subLayer (above tf); push it to the back.
+                    rect.move(subLayer, ElementPlacement.PLACEATEND);
                 }
-
-                tf.move(subLayer, ElementPlacement.PLACEATBEGINNING);
             }
 
             alert("Done. Created layer \"" + layerName + "\" with " + paths.length + " label" + (paths.length === 1 ? "." : "s."));
