@@ -2,7 +2,7 @@
 
 (function () {
     var SCRIPT_NAME        = "Paths to Sublayers";
-    var SCRIPT_VERSION     = "1.3";
+    var SCRIPT_VERSION     = "1.4";
     var SCRIPT_DESCRIPTION = "Moves each selected path to a sublayer within a new named layer.";
 
     if (app.documents.length === 0) {
@@ -15,13 +15,13 @@
     var paths = [];
     var sel = doc.selection;
     for (var i = 0; i < sel.length; i++) {
-        if (sel[i].typename === "PathItem") {
+        if (sel[i].typename === "PathItem" || sel[i].typename === "CompoundPathItem") {
             paths.push(sel[i]);
         }
     }
 
     if (paths.length === 0) {
-        alert("No paths are selected.\nPlease select one or more paths and try again.");
+        alert("No paths are selected.\nPlease select one or more paths or compound paths and try again.");
         return;
     }
 

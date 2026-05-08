@@ -1,32 +1,3 @@
-// =============================================================================
-// Label Paths  v1.4
-// =============================================================================
-// Creates a centred Helvetica text label for each selected path.
-// Label text is taken from the name of the sublayer the path currently lives on.
-//
-// Usage:
-//   1. Select one or more paths (typically after running Paths to Sublayers).
-//   2. Run the script via File > Scripts.
-//   3. In the dialog:
-//        Layer name      — name of the new top-level layer that holds all labels
-//        Sublayer prefix — prefix for each label's sublayer (e.g. "Label 1", "Label 2")
-//        Font size       — point size of the label text
-//        Bold            — use Helvetica-Bold instead of Helvetica
-//        Colour          — RGB fill colour of the text (0–255 per channel)
-//        Background      — optionally draw a filled rectangle behind each label
-//          BG colour     — RGB fill colour of the background rectangle
-//          Margin        — padding in points between the text bounds and the rectangle edge
-//   4. Click Make Labels.
-//
-// Output:
-//   A new layer (named by "Layer name") is created at the top of the layer stack.
-//   Each label gets its own sublayer containing a text frame centred on the
-//   bounding-box centroid of its source path, and optionally a background rectangle.
-//   On SVG export (Object IDs: Layer Names) these become nested <g> elements.
-//
-// Requirements:  Adobe Illustrator 2026, at least one path selected.
-// =============================================================================
-
 #target illustrator
 
 (function () {
